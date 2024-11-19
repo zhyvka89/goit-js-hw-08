@@ -63,3 +63,64 @@ const images = [
     description: "Lighthouse Coast Sea",
   },
 ];
+
+const gallery = document.querySelector('.gallery');
+
+const createGalleryItems = (images) => {
+  return images.map(({preview, original, description}) => {
+    const liElem = document.createElement('li');
+    liElem.classList.add('gallery-item');
+  
+    const linkElem = document.createElement('a');
+    linkElem.classList.add('gallery-item');
+    linkElem.href = original;
+  
+    const imgElem = document.createElement('img');
+    imgElem.classList.add('gallery-image');
+    imgElem.src = preview;
+    imgElem.dataset.sourse = original;
+    imgElem.alt = description;
+  
+    linkElem.append(imgElem)
+    liElem.append(linkElem);
+  
+    return liElem;
+  })
+}
+
+const appendGalleryItems = (items) => {
+  gallery.append(...items);
+}
+
+const items = createGalleryItems(images);
+appendGalleryItems(items);
+
+gallery.addEventListener('click', (e) => {
+  e.preventDefault();
+  
+  if(e.target.nodeName !== 'IMG') return;
+
+  const imageSrc = e.target.dataset.sourse;
+  const imageAlt = e.target.alt;
+  const modalContent = createModalContent(imageSrc, imageAlt)
+
+  const instance =  basicLightbox.create(modalContent);
+  instance.show();
+});
+
+const createModalContent = (url, alt) => {
+  const contentWrapper = document.createElement('div');
+  contentWrapper.classList.add('image-wrapper');
+
+  const image = document.createElement('img');
+  image.src = url;
+  image.alt = alt;
+
+  const title = document.createElement('h1');
+  title.textContent = alt;
+
+  contentWrapper.append(image);
+  contentWrapper.append(title);
+
+  return contentWrapper;
+}
